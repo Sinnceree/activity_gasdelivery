@@ -1,0 +1,3 @@
+RegisterServerEvent("")
+AddEventHandler("", function()
+end)
