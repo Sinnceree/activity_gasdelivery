@@ -19,14 +19,14 @@ AddEventHandler("activity_gasdelivery:getOnDuty", function()
 end)
 
 -- Called to check user vehicle trailer info
-RegisterServerEvent("activity_gasdelivery:getTrailerInfo")
-AddEventHandler("activity_gasdelivery:getTrailerInfo", function()
+RegisterServerEvent("activity_gasdelivery:getTrailerFuelLevel")
+AddEventHandler("activity_gasdelivery:getTrailerFuelLevel", function(cb)
   if Config.playerSpawnedTrailers[source] == nil then
     return nil
   end
    
-  print(Config.playerSpawnedTrailers[source])
-  return Config.playerSpawnedTrailers[source]
+  print(Config.playerSpawnedTrailers[source].fuelLevel)
+  return TriggerClientEvent("activity_gasdelivery:notification", source, Config.playerSpawnedTrailers[source].fuelLevel)
 end)
 
 -- Called when a trailer has been refilled to 100%
@@ -54,11 +54,53 @@ AddEventHandler("activity_gasdelivery:assignGasStation", function()
   print(Config.playerAssignedStation[source])
   
   TriggerClientEvent("activity_gasdelivery:assignedZone", source, Config.playerAssignedStation[source])
-  -- if Config.playerSpawnedTrailers[source] == nil then
-  --   return
-  -- end
+end)
 
-  -- Config.playerSpawnedTrailers[source].fuelLevel = 100
-  -- TriggerClientEvent("activity_gasdelivery:updateTrailerInfo", source, Config.playerSpawnedTrailers[source])
-  -- return 
+
+-- Called when the client is in gas station and trying to fill their zone
+RegisterServerEvent("activity_gasdelivery:fillStation")
+AddEventHandler("activity_gasdelivery:fillStation", function(station)
+  for _, gasStation in pairs(Config.gasStations) do
+    if gasStation.id == station then
+
+      if gasStation.fuelLevel == 100 then
+        return TriggerClientEvent("activity_gasdelivery:notification", source, "This gas station is currently full")
+      end
+      
+      if gasStation.isBeingFilled then
+        return TriggerClientEvent("activity_gasdelivery:notification", source, "This gas station is currently being filled")
+      end
+      
+      local fuelNeeded = 100 - gasStation.fuelLevel
+
+      print("fuel needed to fill up " .. fuelNeeded)
+      
+      if Config.playerSpawnedTrailers[source].fuelLevel < fuelNeeded then
+        return TriggerClientEvent("activity_gasdelivery:notification", source, "More fuel in trailer required.")
+      end
+
+      gasStation.isBeingFilled = true
+      TriggerClientEvent("activity_gasdelivery:startFillingStation", source, station)
+    
+    end
+  end
+
+end)
+
+-- Called when the client is done filling the station
+RegisterServerEvent("activity_gasdelivery:completedFillingStation")
+AddEventHandler("activity_gasdelivery:completedFillingStation", function(station)
+  for _, gasStation in pairs(Config.gasStations) do
+    if gasStation.id == station then
+      local fueldUsed = Config.playerSpawnedTrailers[source].fuelLevel - gasStation.fuelLevel
+
+      Config.playerSpawnedTrailers[source].fuelLevel = fueldUsed
+      gasStation.isBeingFilled = false
+      gasStation.fuelLevel = 100
+      
+      print("Completed filling zone")
+    
+    end
+  end
+
 end)

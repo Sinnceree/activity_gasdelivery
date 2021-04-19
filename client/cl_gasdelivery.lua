@@ -17,6 +17,7 @@ Config.gasStationZones:onPlayerInOut(function(isPointInside, point, zone)
     status = "Inside zone start pumping gas into tank."
   elseif assignedStation ~= nil and zone.name == assignedStation and not isPointInside then
     status = "Please enter your assigned gas station to fill"
+    insideAssignedStation = false
   end
 end)
 
@@ -32,8 +33,13 @@ Citizen.CreateThread(function()
     if isInRefillZone and IsControlJustPressed(1, 86) then
       TriggerEvent("activity_gasdelivery:attemptRefill")
     end
-    showText(status)
 
+    -- If has an assigned zone and inside it while clicking "E" then
+    if assignedStation ~= nil and insideAssignedStation and IsControlJustPressed(1, 86) then
+      TriggerEvent("activity_gasdelivery:attemptFillStation")
+    end
+
+    showText(status)
   end
 end)
 
@@ -81,8 +87,12 @@ RegisterNetEvent("activity_gasdelivery:startRefillingTrailer")
 AddEventHandler("activity_gasdelivery:startRefillingTrailer", function()
   Citizen.CreateThread(function()
     print("Filling trailer with fuel...")
+    TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 0.5, "pumping", 0.005)
+
     
     Citizen.Wait(5000)
+    TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 0.5, "pumping", 0)
+
     print("completed filling lets let the server know...")
     TriggerServerEvent("activity_gasdelivery:trailerRefilled")
   end)
@@ -107,4 +117,50 @@ RegisterNetEvent("activity_gasdelivery:assignedZone")
 AddEventHandler("activity_gasdelivery:assignedZone", function(station)
   status = "Assigned to fill gas station " .. station
   assignedStation = station
+end)
+
+-- Called when user is trying to refill gas station
+RegisterNetEvent("activity_gasdelivery:attemptFillStation")
+AddEventHandler("activity_gasdelivery:attemptFillStation", function(message)
+  local playerServerId = GetPlayerServerId(PlayerId())
+  local pedVehicle = GetVehiclePedIsIn(PlayerPedId(), false)
+
+  if pedVehicle ~= 0 then
+    return sendNotification("You can't start pumping fuel while in vehicle.", playerServerId)
+  end
+
+
+  if trailerInfo == nil then
+    return sendNotification("You don't have an assign trailer to refill.", playerServerId)
+  end
+
+  local trailerCoords = GetEntityCoords(trailerObj)
+  local isInside, insideZone = Config.gasStationZones:isPointInside(trailerCoords)
+  local canFuelZone = false
+  
+  if insideZone ~= nil and insideZone.name == assignedStation then
+    canFuelZone = true
+  end
+
+  if not canFuelZone then
+    return
+  end
+
+  TriggerServerEvent("activity_gasdelivery:fillStation", assignedStation)
+end)
+
+-- Called when server allows us to actually refill the station
+RegisterNetEvent("activity_gasdelivery:startFillingStation")
+AddEventHandler("activity_gasdelivery:startFillingStation", function(station)
+  Citizen.CreateThread(function()
+    TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 0.5, "pumping", 0.005)
+    FreezeEntityPosition(trailerObj, true)
+    
+    print("Starting to pump fuel")
+    Citizen.Wait(20000)
+    FreezeEntityPosition(trailerObj, false)
+    TriggerServerEvent("activity_gasdelivery:completedFillingStation", assignedStation)
+    TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 0.5, "pumping", 0)
+
+  end)
 end)
