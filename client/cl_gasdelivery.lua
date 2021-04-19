@@ -30,12 +30,14 @@ AddEventHandler("activity_gasdelivery:attemptRefill", function(message)
   local trailerCoords = GetEntityCoords(trailerObj)
   local isTrailerInside = Config.refillTrailerZone:isPointInside(trailerCoords)
 
-  print(" trailer obj " .. trailerObj)
+  if isTrailerInside then
+    if trailerInfo.fuelLevel == 100 then
+      return sendNotification("Your trailer is already full!", playerServerId)
+    end
 
-  print(isTrailerInside)
+    TriggerEvent("activity_gasdelivery:startRefillingTrailer")
+  end
 
-  -- local playerServerId = GetPlayerServerId(PlayerId())
-  -- sendNotification(message, playerServerId)
 end)
 
 -- Called when the server is ready to let us spawn a trailer
@@ -56,9 +58,27 @@ AddEventHandler("activity_gasdelivery:spawnTrailer", function(info)
   trailerInfo = info
 end)
 
+-- Called to start refilling this truck
+RegisterNetEvent("activity_gasdelivery:startRefillingTrailer")
+AddEventHandler("activity_gasdelivery:startRefillingTrailer", function()
+  Citizen.CreateThread(function()
+    print("Filling trailer with fuel...")
+    
+    Citizen.Wait(5000)
+    print("completed filling lets let the server know...")
+    TriggerServerEvent("activity_gasdelivery:trailerRefilled")
+  end)
+end)
+
 -- Called when server wants to send user a notification
 RegisterNetEvent("activity_gasdelivery:notification")
 AddEventHandler("activity_gasdelivery:notification", function(message)
   local playerServerId = GetPlayerServerId(PlayerId())
   sendNotification(message, playerServerId)
+end)
+
+-- Called when server updates any trailer values and need to update on client
+RegisterNetEvent("activity_gasdelivery:updateTrailerInfo")
+AddEventHandler("activity_gasdelivery:updateTrailerInfo", function(info)
+  trailerInfo = info
 end)

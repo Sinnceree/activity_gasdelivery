@@ -28,3 +28,15 @@ AddEventHandler("activity_gasdelivery:getTrailerInfo", function()
   print(Config.playerSpawnedTrailers[source])
   return Config.playerSpawnedTrailers[source]
 end)
+
+-- Called when a trailer has been refilled to 100%
+RegisterServerEvent("activity_gasdelivery:trailerRefilled")
+AddEventHandler("activity_gasdelivery:trailerRefilled", function()
+  if Config.playerSpawnedTrailers[source] == nil then
+    return
+  end
+
+  Config.playerSpawnedTrailers[source].fuelLevel = 100
+  TriggerClientEvent("activity_gasdelivery:updateTrailerInfo", source, Config.playerSpawnedTrailers[source])
+  return 
+end)
