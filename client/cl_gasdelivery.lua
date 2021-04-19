@@ -1,8 +1,26 @@
+
+-- Status/assigned station
+local status = "Not signed on"
+local assignedStation = nil
+
+-- Refill zone variable and listening handler
 local isInRefillZone = false
 Config.refillTrailerZone:onPlayerInOut(function(isPointInside, point)
   isInRefillZone = isPointInside
 end)
 
+-- is inside assigned station zone
+local insideAssignedStation = false
+Config.gasStationZones:onPlayerInOut(function(isPointInside, point, zone)
+  if assignedStation ~= nil and zone.name == assignedStation and isPointInside then
+    insideAssignedStation = true
+    status = "Inside zone start pumping gas into tank."
+  elseif assignedStation ~= nil and zone.name == assignedStation and not isPointInside then
+    status = "Please enter your assigned gas station to fill"
+  end
+end)
+
+-- Trailer variables
 local trailerObj = nil
 local trailerInfo = nil
 
@@ -14,6 +32,7 @@ Citizen.CreateThread(function()
     if isInRefillZone and IsControlJustPressed(1, 86) then
       TriggerEvent("activity_gasdelivery:attemptRefill")
     end
+    showText(status)
 
   end
 end)
@@ -43,8 +62,6 @@ end)
 -- Called when the server is ready to let us spawn a trailer
 RegisterNetEvent("activity_gasdelivery:spawnTrailer")
 AddEventHandler("activity_gasdelivery:spawnTrailer", function(info)
-  print("okay we're allowed to spawn trailer")
-
   local coords = vector3(660.2506, -2661.789, 6.081177)
   RequestModel(Config.fuelTrailerHashKey)
   while not HasModelLoaded(Config.fuelTrailerHashKey) do
@@ -53,8 +70,9 @@ AddEventHandler("activity_gasdelivery:spawnTrailer", function(info)
 
   trailerObj = CreateVehicle(Config.fuelTrailerHashKey, coords["x"], coords["y"],  coords["z"], 177.77, true, false)
   SetEntityHeading(trailerObj, 140.338)
+  SetEntityInvincible(trailerObj, true)
 
-  print(trailerObj)
+  status = "Please pickup assigned trailer and wait for a call!w"
   trailerInfo = info
 end)
 
@@ -81,4 +99,12 @@ end)
 RegisterNetEvent("activity_gasdelivery:updateTrailerInfo")
 AddEventHandler("activity_gasdelivery:updateTrailerInfo", function(info)
   trailerInfo = info
+end)
+
+
+-- Called when server sent us an assigned zone
+RegisterNetEvent("activity_gasdelivery:assignedZone")
+AddEventHandler("activity_gasdelivery:assignedZone", function(station)
+  status = "Assigned to fill gas station " .. station
+  assignedStation = station
 end)

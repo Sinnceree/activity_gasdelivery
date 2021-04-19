@@ -40,3 +40,25 @@ AddEventHandler("activity_gasdelivery:trailerRefilled", function()
   TriggerClientEvent("activity_gasdelivery:updateTrailerInfo", source, Config.playerSpawnedTrailers[source])
   return 
 end)
+
+-- Called when we picked a random person to assign a gas station to fill up.
+RegisterServerEvent("activity_gasdelivery:assignGasStation")
+AddEventHandler("activity_gasdelivery:assignGasStation", function()
+  -- Leta generate a random gas station for them to go too
+  local randomStationIndex = math.random(#Config.gasStations)
+  local assignedStation = Config.gasStations[randomStationIndex]
+
+  -- Lets store the zone theyre assigned to keep track
+  Config.playerAssignedStation[source] = assignedStation.id
+
+  print(Config.playerAssignedStation[source])
+  
+  TriggerClientEvent("activity_gasdelivery:assignedZone", source, Config.playerAssignedStation[source])
+  -- if Config.playerSpawnedTrailers[source] == nil then
+  --   return
+  -- end
+
+  -- Config.playerSpawnedTrailers[source].fuelLevel = 100
+  -- TriggerClientEvent("activity_gasdelivery:updateTrailerInfo", source, Config.playerSpawnedTrailers[source])
+  -- return 
+end)

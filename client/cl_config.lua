@@ -16,9 +16,21 @@ Config = {
     maxZ=10.06
   }),
 
-  gasStations = {
-    { id = "gas_station_1", fullyFilled = false, fillLevel = 50 },
-    { id = "gas_station_2", fullyFilled = false, fillLevel = 50 },
-  }
+  gasStationZones = ComboZone:Create({
+    BoxZone:Create(vector3(266.84, -1258.97, 29.18), 34.2, 35.2, {
+      name="gas_station_1",
+      heading=0,
+      -- debugPoly=true,
+      minZ=28.18,
+      maxZ=34.98
+    }),
+    -- BoxZone:Create(vector3(-322.2, -1475.44, 36.72), 32.6, 34.2, {
+    --   name="gas_station_2",
+    --   heading=350,
+    --   --debugPoly=true,
+    --   minZ=29.52,
+    --   maxZ=35.12
+    -- })
+  }, { name="combo", debugPoly=true })
 
 }
