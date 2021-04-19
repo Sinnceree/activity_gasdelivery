@@ -1,4 +1,5 @@
 Config = {
+  enableNopixelExports = false,
   fuelTrailerHashKey = -730904777,
 
   -- trailerSpawningZone = BoxZone:Create(vector3(661.72, -2662.53, 10.34), 16.2, 16.0, {
