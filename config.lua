@@ -7,12 +7,16 @@ Config = {
   enableNopixelExports = false,
   fuelTrailerHashKey = -730904777,
   gasStations = {
-    { id = "gas_station_1", isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_2", isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_3", isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_4", isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_5", isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_6", isBeingFilled = false, fuelLevel = 50 },
+    { id = "gas_station_1" , isBeingFilled = false, fuelLevel = 50 },
+    { id = "gas_station_2" , isBeingFilled = false, fuelLevel = 50 },
+    { id = "gas_station_3" , isBeingFilled = false, fuelLevel = 50 },
+    { id = "gas_station_4" , isBeingFilled = false, fuelLevel = 50 },
+    { id = "gas_station_5" , isBeingFilled = false, fuelLevel = 50 },
+    { id = "gas_station_6" , isBeingFilled = false, fuelLevel = 50 },
+    { id = "gas_station_7" , isBeingFilled = false, fuelLevel = 50 },
+    { id = "gas_station_8" , isBeingFilled = false, fuelLevel = 50 },
+    { id = "gas_station_9" , isBeingFilled = false, fuelLevel = 50 },
+    { id = "gas_station_10", isBeingFilled = false, fuelLevel = 50 },
   },
 }
 
@@ -83,8 +87,41 @@ if (not IsDuplicityVersion()) then
         --debugPoly=true,
         minZ=67.58,
         maxZ=74.38
-      })
+      }),
       
+      -- gas_station_7
+      BoxZone:Create(vector3(1206.08, -1402.81, 35.28), 21.2, 26.2, {
+        name="gas_station_7",
+        heading=24,
+        --debugPoly=true,
+        minZ=33.28,
+        maxZ=40.68
+      }),
+
+      -- gas_station_8
+      BoxZone:Create(vector3(-2093.63, -319.2, 13.78), 44.4, 41.4, {
+        name="gas_station_8",
+        heading=355,
+        --debugPoly=true,
+        minZ=11.78,
+        maxZ=18.38
+      }),
+
+      -- gas_station_9
+      BoxZone:Create(vector3(2685.81, 3271.25, 55.34), 14.8, 34.6, {
+        name="gas_station_9",
+        heading=240,
+        --debugPoly=true,
+        minZ=53.94,
+        maxZ=59.14
+      }),
+
+      -- gas_station_10
+      BoxZone:Create(vector3(2002.13, 3768.66, 32.18), 23.8, 41.4, {
+        name="gas_station_10",
+        heading=30,
+        --debugPoly=true
+      })
       
       
       
