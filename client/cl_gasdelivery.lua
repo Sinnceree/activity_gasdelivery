@@ -1,4 +1,6 @@
 
+local activityInProgress = false
+
 -- Status/assigned station
 local status = "Not signed on"
 local assignedStation = nil
@@ -12,11 +14,11 @@ end)
 -- is inside assigned station zone
 local insideAssignedStation = false
 Config.zones.gasStationZones:onPlayerInOut(function(isPointInside, point, zone)
-  if assignedStation ~= nil and zone.name == assignedStation and isPointInside then
+  if assignedStation ~= nil and zone.name == assignedStation.id and isPointInside then
     insideAssignedStation = true
     status = "Inside zone start pumping gas into tank."
-  elseif assignedStation ~= nil and zone.name == assignedStation and not isPointInside then
-    status = "Please enter your assigned gas station to fill"
+  elseif assignedStation ~= nil and zone.name == assignedStation.id and not isPointInside then
+    status = "Please enter your assigned gas station - " .. assignedStation.name
     insideAssignedStation = false
   end
 end)
@@ -53,7 +55,7 @@ AddEventHandler(("%s:attemptRefill"):format(Config.activityName), function(messa
   end
 
   local trailerCoords = GetEntityCoords(trailerObj)
-  local isTrailerInside = Zone.refillTrailerZone:isPointInside(trailerCoords)
+  local isTrailerInside = Config.zones.refillTrailerZone:isPointInside(trailerCoords)
 
   if isTrailerInside then
     if trailerInfo.fuelLevel == 100 then
@@ -109,14 +111,37 @@ end)
 RegisterNetEvent(("%s:updateTrailerInfo"):format(Config.activityName))
 AddEventHandler(("%s:updateTrailerInfo"):format(Config.activityName), function(info)
   trailerInfo = info
+  print("trailer info updated")
 end)
 
 
 -- Called when server sent us an assigned zone
 RegisterNetEvent(("%s:assignedZone"):format(Config.activityName))
 AddEventHandler(("%s:assignedZone"):format(Config.activityName), function(station)
-  status = "Assigned to fill gas station " .. station
-  assignedStation = station
+  local playerServerId = GetPlayerServerId(PlayerId())
+  local canDoTask = false
+
+  -- Lets check if they can do this "station"/"task"
+  if Config.enableNopixelExports then
+    canDoTask = exports["np-activities"]:canDoTask(Config.activityName, playerServerId, station.id)
+  else
+    canDoTask = true
+  end
+
+  if canDoTask then
+    status = "Assigned to fill gas station " .. station.name
+    assignedStation = station
+    createStationBlip(station)
+    
+    if Config.enableNopixelExports then
+      exports["np-activities"]:taskInProgress(Config.activityName, playerServerId, station.id, (Config.taskDescription):format(station.name))
+    end
+    
+  else
+    sendNotification("Can't do that task.", playerServerId)
+  end
+  
+
 end)
 
 -- Called when user is trying to refill gas station
@@ -124,28 +149,31 @@ RegisterNetEvent(("%s:attemptFillStation"):format(Config.activityName))
 AddEventHandler(("%s:attemptFillStation"):format(Config.activityName), function(message)
   local playerServerId = GetPlayerServerId(PlayerId())
   local pedVehicle = GetVehiclePedIsIn(PlayerPedId(), false)
-
+  
   if pedVehicle ~= 0 then
     return sendNotification("You can't start pumping fuel while in vehicle.", playerServerId)
   end
-
-
+  
+  
   if trailerInfo == nil then
     return sendNotification("You don't have an assign trailer to refill.", playerServerId)
   end
 
+  
   local trailerCoords = GetEntityCoords(trailerObj)
   local isInside, insideZone = Config.zones.gasStationZones:isPointInside(trailerCoords)
   local canFuelZone = false
   
-  if insideZone ~= nil and insideZone.name == assignedStation then
+  if insideZone ~= nil and insideZone.name == assignedStation.id then
     canFuelZone = true
   end
-
+  
   if not canFuelZone then
     return
   end
-
+  
+  print("got called?")
+  
   TriggerServerEvent(("%s:fillStation"):format(Config.activityName), assignedStation)
 end)
 
@@ -157,10 +185,40 @@ AddEventHandler(("%s:startFillingStation"):format(Config.activityName), function
     FreezeEntityPosition(trailerObj, true)
     
     print("Starting to pump fuel")
-    Citizen.Wait(20000)
+    Citizen.Wait(10000)
+
     FreezeEntityPosition(trailerObj, false)
     TriggerServerEvent(("%s:completedFillingStation"):format(Config.activityName), assignedStation)
     TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 0.5, "pumping", 0)
 
+    removeStationBlip(station) -- remove the blip we created
+    status = "Waiting to be assigned another station"
+    assignedStation = nil
+
   end)
+end)
+
+-- Called when user tries to go on duty
+RegisterNetEvent(("%s:attemptSignOnDuty"):format(Config.activityName))
+AddEventHandler(("%s:attemptSignOnDuty"):format(Config.activityName), function(message)
+  local playerServerId = GetPlayerServerId(PlayerId())
+  local canDoActivity = false
+
+  if Config.enableNopixelExports then
+    canDoActivity = exports["np-activities"]:canDoActivity(Config.activityName, playerServerId)
+  else
+    canDoActivity = true
+  end
+
+  if canDoActivity then
+    TriggerServerEvent(("%s:getOnDuty"):format(Config.activityName))
+    activityInProgress = true
+
+    if Config.enableNopixelExports then
+      exports["np-activities"]:activityInProgress(Config.activityName, playerServerId, Config.timeToComplete)
+    end
+    
+  else
+    sendNotification("You cant do this task at the moment", playerServerId)
+  end
 end)

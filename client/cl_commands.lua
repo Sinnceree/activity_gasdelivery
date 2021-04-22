@@ -1,6 +1,6 @@
 
 RegisterCommand("startgas", function(source, args)
-  TriggerServerEvent(("%s:getOnDuty"):format(Config.activityName))
+  TriggerEvent(("%s:attemptSignOnDuty"):format(Config.activityName))
 end, false)
 
 RegisterCommand("forceassign", function(source, args)

@@ -6,21 +6,29 @@ Config = {
   playerAssignedStation = {}, -- Store the player with their assigned zone
   enableNopixelExports = false,
   fuelTrailerHashKey = -730904777,
-  gasStations = {
-    { id = "gas_station_1" , isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_2" , isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_3" , isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_4" , isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_5" , isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_6" , isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_7" , isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_8" , isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_9" , isBeingFilled = false, fuelLevel = 50 },
-    { id = "gas_station_10", isBeingFilled = false, fuelLevel = 50 },
+  timeToComplete = 0, -- How long to complete activity
+  taskDescription = "Refill %s", -- Task description for gas stations
+  gasStations = { 
+    { name = "Gas Station 1" , id = "gas_station_1",  isBeingFilled = false, fuelLevel = 50, coords = vector3(266.84, -1258.97, 29.18), },
+    { name = "Gas Station 2" , id = "gas_station_2",  isBeingFilled = false, fuelLevel = 50, coords = vector3(-322.2, -1475.44, 36.72) },
+    { name = "Gas Station 3" , id = "gas_station_3",  isBeingFilled = false, fuelLevel = 50, coords = vector3(-523.57, -1206.34, 20.0) },
+    { name = "Gas Station 4" , id = "gas_station_4",  isBeingFilled = false, fuelLevel = 50, coords = vector3(621.17, 271.09, 102.41) },
+    { name = "Gas Station 5" , id = "gas_station_5",  isBeingFilled = false, fuelLevel = 50, coords = vector3(1181.28, -326.99, 68.98) },
+    { name = "Gas Station 6" , id = "gas_station_6",  isBeingFilled = false, fuelLevel = 50, coords = vector3(1206.08, -1402.81, 35.28) },
+    { name = "Gas Station 7" , id = "gas_station_7",  isBeingFilled = false, fuelLevel = 50, coords = vector3(-2093.63, -319.2, 13.78) },
+    { name = "Gas Station 8" , id = "gas_station_8",  isBeingFilled = false, fuelLevel = 50, coords = vector3(2685.81, 3271.25, 55.34) },
+    { name = "Gas Station 9" , id = "gas_station_9",  isBeingFilled = false, fuelLevel = 50, coords = vector3(2002.13, 3768.66, 32.18) },
   },
+  zones = {},
+  blipInfo = {
+    icon = 1,
+    color = 5,
+    scale = 1.0,
+  }
 }
 
-Config.zones = {}
+
+
 
 if (not IsDuplicityVersion()) then
   Config.zones = {}
@@ -62,18 +70,9 @@ if (not IsDuplicityVersion()) then
         --debugPoly=true
       }),
 
-      -- gas_station_4
-      BoxZone:Create(vector3(-720.14, -932.92, 18.46), 25.8, 33.8, {
-        name="gas_station_4",
-        heading=0,
-        --debugPoly=true,
-        minZ=17.46,
-        maxZ=22.46
-      }),
-
       -- gas_station_5
       BoxZone:Create(vector3(621.17, 271.09, 102.41), 42.6, 34.4, {
-        name="gas_station_5",
+        name="gas_station_4",
         heading=350,
         --debugPoly=true,
         minZ=100.01,
@@ -82,7 +81,7 @@ if (not IsDuplicityVersion()) then
 
       -- gas_station_6
       BoxZone:Create(vector3(1181.28, -326.99, 68.98), 25.8, 31.2, {
-        name="gas_station_6",
+        name="gas_station_5",
         heading=100,
         --debugPoly=true,
         minZ=67.58,
@@ -91,7 +90,7 @@ if (not IsDuplicityVersion()) then
       
       -- gas_station_7
       BoxZone:Create(vector3(1206.08, -1402.81, 35.28), 21.2, 26.2, {
-        name="gas_station_7",
+        name="gas_station_6",
         heading=24,
         --debugPoly=true,
         minZ=33.28,
@@ -100,7 +99,7 @@ if (not IsDuplicityVersion()) then
 
       -- gas_station_8
       BoxZone:Create(vector3(-2093.63, -319.2, 13.78), 44.4, 41.4, {
-        name="gas_station_8",
+        name="gas_station_7",
         heading=355,
         --debugPoly=true,
         minZ=11.78,
@@ -109,7 +108,7 @@ if (not IsDuplicityVersion()) then
 
       -- gas_station_9
       BoxZone:Create(vector3(2685.81, 3271.25, 55.34), 14.8, 34.6, {
-        name="gas_station_9",
+        name="gas_station_8",
         heading=240,
         --debugPoly=true,
         minZ=53.94,
@@ -118,7 +117,7 @@ if (not IsDuplicityVersion()) then
 
       -- gas_station_10
       BoxZone:Create(vector3(2002.13, 3768.66, 32.18), 23.8, 41.4, {
-        name="gas_station_10",
+        name="gas_station_9",
         heading=30,
         --debugPoly=true
       })

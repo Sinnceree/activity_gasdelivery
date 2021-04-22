@@ -22,3 +22,22 @@ function showText(message)
   AddTextComponentString(message)
   DrawText(100, 100)
 end
+
+-- Create a blip
+local createdBlip = {}
+function createStationBlip(station)
+  AddTextEntry(station.id, "Assigned Station - " .. station.name)
+  createdBlip[station.id] = AddBlipForCoord(station.coords["x"], station.coords["y"], station.coords["z"])
+  SetBlipSprite(createdBlip[station.id], Config.blipInfo.icon)
+  SetBlipDisplay(createdBlip[station.id], 2)
+  SetBlipScale(createdBlip[station.id], Config.blipInfo.scale)
+  SetBlipColour(createdBlip[station.id], Config.blipInfo.color)
+  SetBlipAsShortRange(createdBlip[station.id], true)
+  BeginTextCommandSetBlipName(station.id)
+  AddTextComponentString(station.name)
+  EndTextCommandSetBlipName(createdBlip[station.id])
+end
+
+function removeStationBlip(station)
+  RemoveBlip(createdBlip[station.id])
+end
