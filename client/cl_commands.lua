@@ -1,14 +1,14 @@
 
 RegisterCommand("startgas", function(source, args)
-  TriggerServerEvent("activity_gasdelivery:getOnDuty")
+  TriggerServerEvent(("%s:getOnDuty"):format(Config.activityName))
 end, false)
 
 RegisterCommand("forceassign", function(source, args)
-  TriggerServerEvent("activity_gasdelivery:assignGasStation")
+  TriggerServerEvent(("%s:assignGasStation"):format(Config.activityName))
 end, false)
 
 RegisterCommand("trailerfuel", function(source, args)
-  TriggerServerEvent("activity_gasdelivery:getTrailerFuelLevel", function(trailer)
+  TriggerServerEvent(("%s:getTrailerFuelLevel"):format(Config.activityName), function(trailer)
     print(trailer)
   end)
 end, false)
