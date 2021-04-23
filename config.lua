@@ -8,6 +8,7 @@ Config = {
   fuelTrailerHashKey = -730904777,
   timeToComplete = 0, -- How long to complete activity
   pumpFuelTime = 10000, -- How long it takes to pump fuel at a station in MS
+  refuelTrailerTime = 10000, -- How long it takes to refuel trailer in MS
   taskDescription = "Refill %s", -- Task description for gas stations
   gasStations = { 
     { name = "Gas Station 1" , id = "gas_station_1",  isBeingFilled = false, fuelLevel = 50, coords = vector3(266.84, -1258.97, 29.18), },

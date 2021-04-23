@@ -90,11 +90,13 @@ end)
 RegisterNetEvent("activity_gasdelivery:startRefillingTrailer")
 AddEventHandler("activity_gasdelivery:startRefillingTrailer", function()
   Citizen.CreateThread(function()
+    FreezeEntityPosition(trailerObj, true)
     print("Filling trailer with fuel...")
     TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 0.5, "pumping", 0.005)
 
     
-    Citizen.Wait(5000)
+    Citizen.Wait(Config.refuelTrailerTime)
+    FreezeEntityPosition(trailerObj, false)
     TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 0.5, "pumping", 0)
 
     print("completed filling lets let the server know...")
@@ -173,8 +175,6 @@ AddEventHandler(("%s:attemptFillStation"):format(Config.activityName), function(
   if not canFuelZone then
     return
   end
-  
-  print("got called?")
   
   TriggerServerEvent(("%s:fillStation"):format(Config.activityName), assignedStation)
 end)
