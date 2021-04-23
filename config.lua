@@ -1,10 +1,12 @@
 Config = {
   activityName = "activity_gasdelivery",
-  debugEnabled = true, 
+  debugEnabled = false,
+  timeBetweenQueueCheck = 30000, -- Check and assign a player to a station every 30 seconds 
+  payoutPerPecent = 11, -- How much money to payout per % of fuel ex ($11 x 40) if a station only need 40% to fill up their tank
   playersOnDuty = {}, -- Store any people that started the activity and are waiting for a delivery location
   playerSpawnedTrailers = {}, -- Store the trailers the players spawned to keep track of how much "fuel" they have
   playerAssignedStation = {}, -- Store the player with their assigned zone
-  enableNopixelExports = false, -- Either use nopixel exports or not
+  enableNopixelExports = true, -- Either use nopixel exports or not
   fuelTrailerHashKey = -730904777, -- Trailer vehicle hash key
   timeToComplete = 0, -- How long to complete activity
   pumpFuelTime = 10000, -- How long it takes to pump fuel at a station in MS
@@ -39,7 +41,7 @@ if (not IsDuplicityVersion()) then
     refillTrailerZone = BoxZone:Create(vector3(594.79, -2803.04, 6.06), 7.6, 22.8, {
       name="trailer_fill_zone",
       heading=59,
-      debugPoly=true,
+      -- debugPoly=true,
       minZ=4.06,
       maxZ=10.06
     }),

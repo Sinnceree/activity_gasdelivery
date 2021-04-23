@@ -8,6 +8,10 @@ RegisterCommand("forceassign", function(source, args)
   TriggerServerEvent(("%s:assignGasStation"):format(Config.activityName), playerServerId)
 end, false)
 
+RegisterCommand("stopgas", function(source, args)
+  TriggerEvent(("%s:attemptSignOffDuty"):format(Config.activityName))
+end, false)
+
 RegisterCommand("trailerfuel", function(source, args)
   TriggerServerEvent(("%s:getTrailerFuelLevel"):format(Config.activityName), function(trailer)
     print(trailer)

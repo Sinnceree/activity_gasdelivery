@@ -182,6 +182,8 @@ end)
 -- Called when server allows us to actually refill the station
 RegisterNetEvent(("%s:startFillingStation"):format(Config.activityName))
 AddEventHandler(("%s:startFillingStation"):format(Config.activityName), function(station)
+  local playerServerId = GetPlayerServerId(PlayerId())
+
   Citizen.CreateThread(function()
     TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 0.5, "pumping", 0.005)
     FreezeEntityPosition(trailerObj, true)
@@ -240,4 +242,21 @@ end)
 RegisterNetEvent(("%s:setActivityStatus"):format(Config.activityName))
 AddEventHandler(("%s:setActivityStatus"):format(Config.activityName), function(toggle)
   activityEnabled = toggle
+end)
+
+
+-- Called when user is trying to sign off duty
+RegisterNetEvent(("%s:attemptSignOffDuty"):format(Config.activityName))
+AddEventHandler(("%s:attemptSignOffDuty"):format(Config.activityName), function()
+  local playerServerId = GetPlayerServerId(PlayerId())
+
+
+  assignedStation = nil
+  trailerObj = nil
+  TriggerServerEvent(("%s:signOffDuty"):format(Config.activityName))
+
+  if Config.enableNopixelExports then
+    exports["np-activities"]:activityCompleted(Config.activityName, playerServerId, true, "Player signed off duty")
+  end
+
 end)

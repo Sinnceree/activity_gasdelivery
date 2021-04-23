@@ -1,4 +1,14 @@
 
+Citizen.CreateThread(function()
+  while true do
+    Citizen.Wait(Config.timeBetweenQueueCheck)
+    if #Config.playersOnDuty > 0 then
+      assignPlayerStation()
+    end
+  end
+end)
+
+
 -- Used to sign on duty and get ready to recieve delivery jobs
 RegisterServerEvent(("%s:getOnDuty"):format(Config.activityName))
 AddEventHandler(("%s:getOnDuty"):format(Config.activityName), function()
@@ -8,7 +18,7 @@ AddEventHandler(("%s:getOnDuty"):format(Config.activityName), function()
   end
 
   -- Lets add the player to on duty list
-  Config.playersOnDuty[source] = true
+  Config.playersOnDuty[source] = { id = source, assignedStation = nil }
 
   -- Lets spawn the user gas trailer with values
   local randomFuelLevel = math.random(1, 40) -- Lets generate a random amount of fuel when we create trailer
@@ -78,6 +88,10 @@ AddEventHandler(("%s:assignGasStation"):format(Config.activityName), function(pl
       Config.playerAssignedStation[playerServerId] = station
       Config.playerAssignedStation[playerServerId].fuelLevel = math.random(1, 40)
       
+      -- Update their status in the duty table
+      Config.playersOnDuty[playerServerId].assignedStation = assignedStationId
+      
+      station.assignedTo = playerServerId
       TriggerClientEvent(("%s:assignedZone"):format(Config.activityName), playerServerId, Config.playerAssignedStation[playerServerId])
     end
   end
@@ -118,17 +132,34 @@ RegisterServerEvent(("%s:completedFillingStation"):format(Config.activityName))
 AddEventHandler(("%s:completedFillingStation"):format(Config.activityName), function(station)
   for _, gasStation in pairs(Config.gasStations) do
     if gasStation.id == station.id then
-      local fueldUsed = Config.playerSpawnedTrailers[source].fuelLevel - gasStation.fuelLevel
+      local remainingFuel = Config.playerSpawnedTrailers[source].fuelLevel - gasStation.fuelLevel
 
-      Config.playerSpawnedTrailers[source].fuelLevel = fueldUsed
+      Config.playerSpawnedTrailers[source].fuelLevel = remainingFuel
       gasStation.isBeingFilled = false
       gasStation.fuelLevel = 100
+      gasStation.assignedTo = nil
       Config.playerAssignedStation[source] = nil -- Set player back to nil because they finished filling their station
+
+      -- Update their status in the duty table
+      Config.playersOnDuty[source].assignedStation = nil
+
       TriggerClientEvent(("%s:updateTrailerInfo"):format(Config.activityName), source, Config.playerSpawnedTrailers[source])
 
-      print("Completed filling zone")
+      -- Calculate how much to payout the player
+      local fuelUsed = 100 - remainingFuel
+      local payout = Config.payoutPerPecent * fuelUsed
+      print("Completed filling station - Payout was - " .. payout)
+      return TriggerClientEvent(("%s:notification"):format(Config.activityName), source, "Completed! Payout is $" .. payout)
     
     end
   end
 
+end)
+
+-- Called when the client is signing off duty
+RegisterServerEvent(("%s:signOffDuty"):format(Config.activityName))
+AddEventHandler(("%s:signOffDuty"):format(Config.activityName), function()
+  
+  Config.playerSpawnedTrailers[source] = nil
+  Config.playersOnDuty[source] = nil
 end)
