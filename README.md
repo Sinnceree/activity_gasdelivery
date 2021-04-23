@@ -19,3 +19,7 @@ and the person does that they would recieve $660 for that one run.
 ---
 * Add more gas stations
 * Probably add a ped animation while trailer is pumping fuel into gas station storage
+
+# Credits
+---
+* Credit to AstroNaught - I'm using the np-activity boilerplate he made to test the imported functions example.
