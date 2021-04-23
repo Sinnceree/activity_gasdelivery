@@ -16,3 +16,8 @@ server_script {
   "config.lua",
   "server/*.lua"
 }
+
+exports {
+  "setActivityStatus",
+  "startActivity",
+}

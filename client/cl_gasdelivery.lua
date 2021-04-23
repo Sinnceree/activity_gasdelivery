@@ -1,5 +1,7 @@
 
+local activityEnabled = true
 local activityInProgress = false
+
 
 -- Status/assigned station
 local status = "Not signed on"
@@ -195,12 +197,22 @@ AddEventHandler(("%s:startFillingStation"):format(Config.activityName), function
     status = "Waiting to be assigned another station"
     assignedStation = nil
 
+    if Config.enableNopixelExports then
+      exports["np-activities"]:taskCompleted(Config.activityName, playerServerId, station.id, true, "Completed filling up station")
+    end
+
+
   end)
 end)
 
 -- Called when user tries to go on duty
 RegisterNetEvent(("%s:attemptSignOnDuty"):format(Config.activityName))
 AddEventHandler(("%s:attemptSignOnDuty"):format(Config.activityName), function(message)
+  -- Check if activity is enabled
+  if not activityEnabled then
+    return 
+  end
+
   local playerServerId = GetPlayerServerId(PlayerId())
   local canDoActivity = false
 
@@ -221,4 +233,11 @@ AddEventHandler(("%s:attemptSignOnDuty"):format(Config.activityName), function(m
   else
     sendNotification("You cant do this task at the moment", playerServerId)
   end
+end)
+
+
+-- Called when user is trying to refill gas station
+RegisterNetEvent(("%s:setActivityStatus"):format(Config.activityName))
+AddEventHandler(("%s:setActivityStatus"):format(Config.activityName), function(toggle)
+  activityEnabled = toggle
 end)

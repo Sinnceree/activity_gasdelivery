@@ -41,3 +41,13 @@ end
 function removeStationBlip(station)
   RemoveBlip(createdBlip[station.id])
 end
+
+-- Exported function
+function setActivityStatus(toggle)
+  TriggerEvent(("%s:setActivityStatus"):format(Config.activityName), toggle)
+end
+
+function startActivity(playerServerId)
+  TriggerEvent(("%s:attemptSignOnDuty"):format(Config.activityName))
+end
+
