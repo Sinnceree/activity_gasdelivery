@@ -4,7 +4,8 @@ RegisterCommand("startgas", function(source, args)
 end, false)
 
 RegisterCommand("forceassign", function(source, args)
-  TriggerServerEvent(("%s:assignGasStation"):format(Config.activityName))
+  local playerServerId = GetPlayerServerId(PlayerId())
+  TriggerServerEvent(("%s:assignGasStation"):format(Config.activityName), playerServerId)
 end, false)
 
 RegisterCommand("trailerfuel", function(source, args)

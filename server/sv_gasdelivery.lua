@@ -45,27 +45,42 @@ end)
 
 -- Called when we picked a random person to assign a gas station to fill up.
 RegisterServerEvent(("%s:assignGasStation"):format(Config.activityName))
-AddEventHandler(("%s:assignGasStation"):format(Config.activityName), function()
+AddEventHandler(("%s:assignGasStation"):format(Config.activityName), function(playerServerId)
   -- Check if theyre on duty before trying to assign them a station
-  if Config.playersOnDuty[source] == nil then
-    return TriggerClientEvent(("%s:notification"):format(Config.activityName), source, "You're not currently on duty but some how trying to be assigned station")
+  if Config.playersOnDuty[playerServerId] == nil then
+    return TriggerClientEvent(("%s:notification"):format(Config.activityName), playerServerId, "You're not currently on duty but some how trying to be assigned station")
   end
 
   -- Lets check if theyre already assigned one before doing it again
-  if Config.playerAssignedStation[source] ~= nil then
-    return TriggerClientEvent(("%s:notification"):format(Config.activityName), source, "You're already assigned a station")
+  if Config.playerAssignedStation[playerServerId] ~= nil then
+    return TriggerClientEvent(("%s:notification"):format(Config.activityName), playerServerId, "You're already assigned a station")
   end
 
   -- Leta generate a random gas station for them to go too
-  local randomStationIndex = math.random(#Config.gasStations)
-  local assignedStation = Config.gasStations[randomStationIndex]
+  local availableStations = {}
+  for v, station in pairs(Config.gasStations) do
+    if station.assignedTo == nil then
+      table.insert(availableStations, station.id)
+    end
+  end
 
-  -- -- Lets store the zone theyre assigned to keep track
-  Config.playerAssignedStation[source] = assignedStation
+  -- We have no available zones so just skip them this run
+  if #availableStations == 0 then
+    return
+  end
 
-  print(Config.playerAssignedStation[source].name)
-  
-  TriggerClientEvent(("%s:assignedZone"):format(Config.activityName), source, Config.playerAssignedStation[source])
+  local randomStationIndex = math.random(#availableStations)
+  local assignedStationId = availableStations[randomStationIndex]
+
+  for v, station in pairs(Config.gasStations) do
+    if station.id == assignedStationId then
+      -- -- Lets store the zone theyre assigned to keep track
+      Config.playerAssignedStation[playerServerId] = station
+      Config.playerAssignedStation[playerServerId].fuelLevel = math.random(1, 40)
+      
+      TriggerClientEvent(("%s:assignedZone"):format(Config.activityName), playerServerId, Config.playerAssignedStation[playerServerId])
+    end
+  end
 end)
 
 
