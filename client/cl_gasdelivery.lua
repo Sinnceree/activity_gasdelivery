@@ -187,7 +187,7 @@ AddEventHandler(("%s:startFillingStation"):format(Config.activityName), function
     FreezeEntityPosition(trailerObj, true)
     
     print("Starting to pump fuel")
-    Citizen.Wait(10000)
+    Citizen.Wait(Config.pumpFuelTime)
 
     FreezeEntityPosition(trailerObj, false)
     TriggerServerEvent(("%s:completedFillingStation"):format(Config.activityName), assignedStation)
