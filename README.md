@@ -22,4 +22,5 @@ and the person does that they would recieve $660 for that one run.
 
 # Credits
 ---
-* Credit to AstroNaught - I'm using the np-activity boilerplate he made to test the imported functions example.
+* Credit to [AstroNaught](https://github.com/cobya) - I'm using the np-activity boilerplate he made to test the imported functions example.
+* Credit to [nnsdev](https://github.com/nnsdev) - I'm using his Polyzone wrapper to use PolyZones in a Typescript resource and generally helped me out making resource performance better.
