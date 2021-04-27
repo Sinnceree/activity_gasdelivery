@@ -1,0 +1,31 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "types/*"
+            ]
+        },
+        "outDir": "./",
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "target": "ES2018",
+        "allowJs": true,
+        "lib": [
+            "ES2018"
+        ],
+        "types": [
+            "@citizenfx/client",
+            "@types/node"
+        ],
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "esModuleInterop": true
+    },
+    "include": [
+        "./**/*"
+    ],
+    "exclude": [
+        "**/node_modules"
+    ]
+}

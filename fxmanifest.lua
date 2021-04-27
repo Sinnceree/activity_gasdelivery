@@ -1,23 +1,8 @@
-fxversion "cerulean"
-fx_version "1.0.0"
-game "gta5"
+fx_version 'cerulean'
+game 'gta5'
 
-client_script {
-  '@PolyZone/client.lua',
-  '@PolyZone/BoxZone.lua',
-  '@PolyZone/EntityZone.lua',
-  '@PolyZone/CircleZone.lua',
-  '@PolyZone/ComboZone.lua',
-  "config.lua",
-  "client/*.lua",
-}
+client_script 'dist/client/*.client.js'
 
-server_script {
-  "config.lua",
-  "server/*.lua"
-}
+shared_script 'dist/config/*.config.js'
 
-exports {
-  "setActivityStatus",
-  "startActivity",
-}
+server_script 'dist/server/*.server.js'
