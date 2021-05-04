@@ -1,10 +1,11 @@
-import * as Cfx from "fivem-js";
+import { Vector3 } from "fivem-js";
 import "./commands"
 import { activityName, formatEventName, fuelTrailerHashKey, refuelTrailerTime, useNopixelExports, pumpFuelTime, timeToComplete } from "../config/main"
-import { sendNotification, createStationBlip, removeStationBlip } from "./functions";
+import { createPed, sendNotification, createStationBlip, removeStationBlip } from "./functions";
 import Trailer from "../server/classes/Trailer"
 import GasStation from "../server/classes/GasStation";
 
+let signOnDutyPed = null;
 let inRefillZone = false;
 let activityEnabled = true;
 let assignedStation: GasStation | null = null;
@@ -20,7 +21,38 @@ on("nns_polyzone:zoneChange", (name: string, isPointInside: boolean, point: any)
   if (assignedStation && name === assignedStation.id) {
     insideAssignedZone = isPointInside
   }
-  console.log(`zone change - ${name} inside - ${isPointInside}`)
+  // console.log(`zone change - ${name} inside - ${isPointInside}`)
+});
+
+
+// Called when resource is started we spawn ped and setup stuff here
+const handleResourceStart = (): void => {
+  const coords = new Vector3(676.2888, -2731.244, 6.018764);
+  signOnDutyPed = createPed("s_m_y_construct_02", coords, 126.935);
+  console.log(signOnDutyPed)
+
+  // Register sign on duty npc
+  const options = [
+    { text: "Sign On", eventName: `activity_${activityName}:attemptSignOnDuty` },
+    { text: "Sign Off", eventName: "" },
+    { text: "Collect Paycheck", eventName: "" },
+  ];
+  global.exports["fivem-inspect"].registerInspectEntity(signOnDutyPed, options);
+
+}
+
+const handleResourceStop = (): void => {
+  global.exports["fivem-inspect"].unregister();
+}
+
+on("onResourceStart", (resourceName: string) => {
+  if (resourceName !== GetCurrentResourceName()) return;
+  handleResourceStart();
+});
+
+on("onResourceStop", (resourceName: string) => {
+  if (resourceName !== GetCurrentResourceName()) return;
+  handleResourceStop();
 });
 
 // Called when user clicks interaction button
@@ -104,7 +136,7 @@ onNet(formatEventName("attemptRefill"), () => {
 
 // Called when the server is ready to let us spawn a trailer
 onNet(formatEventName("spawnTrailer"), (info: Trailer) => {
-  const coords = new Cfx.Vector3(660.2506, -2661.789, 6.081177)
+  const coords = new Vector3(660.2506, -2661.789, 6.081177)
   RequestModel(fuelTrailerHashKey)
 
   trailerObj = CreateVehicle(fuelTrailerHashKey, coords["x"], coords["y"], coords["z"], 177.77, true, false)

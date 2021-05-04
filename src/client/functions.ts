@@ -1,5 +1,6 @@
-import { useNopixelExports, blipInfo } from "../config/main"
-import GasStation from "../server/classes/GasStation"
+import { useNopixelExports, blipInfo } from "../config/main";
+import GasStation from "../server/classes/GasStation";
+import { Vector3 } from "fivem-js";
 
 export const sendNotification = (message: string, playerServerId: number) => {
   if (useNopixelExports) {
@@ -24,4 +25,17 @@ export const createStationBlip = (station: GasStation) => {
 
 export const removeStationBlip = () => {
   RemoveBlip(createdBlip)
+}
+
+export const createPed = (ped: string, coords: Vector3, heading: number): number => {
+  const pedModel = GetHashKey(ped);
+  RequestModel(pedModel);
+
+  const loadingInterval = setInterval(() => {
+    if (HasModelLoaded(pedModel)) {
+      return clearInterval(loadingInterval);
+    }
+  }, 10);
+
+  return CreatePed(0, ped, coords.x, coords.y, coords.z, heading, true, false);
 }
