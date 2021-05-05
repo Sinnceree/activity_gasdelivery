@@ -29,12 +29,11 @@ on("nns_polyzone:zoneChange", (name: string, isPointInside: boolean, point: any)
 const handleResourceStart = (): void => {
   const coords = new Vector3(676.2888, -2731.244, 6.018764);
   signOnDutyPed = createPed("s_m_y_construct_02", coords, 126.935);
-  console.log(signOnDutyPed)
 
   // Register sign on duty npc
   const options = [
-    { text: "Sign On", eventName: `activity_${activityName}:attemptSignOnDuty` },
-    { text: "Sign Off", eventName: "" },
+    { text: "Sign On", eventName: formatEventName("attemptSignOnDuty") },
+    { text: "Sign Off", eventName: formatEventName("signOffDuty") },
     { text: "Collect Paycheck", eventName: "" },
   ];
   global.exports["fivem-inspect"].registerInspectEntity(signOnDutyPed, options);
@@ -57,13 +56,13 @@ on("onResourceStop", (resourceName: string) => {
 
 // Called when user clicks interaction button
 onNet(formatEventName("interaction"), () => {
-  if (inRefillZone) {
-    return TriggerEvent(formatEventName("attemptRefill"))
-  }
+  // if (inRefillZone) {
+  //   return TriggerEvent(formatEventName("attemptRefill"))
+  // }
 
-  if (assignedStation && insideAssignedZone) {
-    return TriggerEvent(formatEventName("attemptFillStation"))
-  }
+  // if (assignedStation && insideAssignedZone) {
+  //   return TriggerEvent(formatEventName("attemptFillStation"))
+  // }
 });
 
 // Called when user tries to go on duty
@@ -107,7 +106,7 @@ onNet(formatEventName("attemptRefill"), () => {
   const trailerCoords = GetEntityCoords(trailerObj, false)
   const dist = GetDistanceBetweenCoords(playerCoord[0], playerCoord[1], playerCoord[2], trailerCoords[0], trailerCoords[1], trailerCoords[2], false)
 
-  if (dist > 2.5) return; // If the trailer is further than 2.5 distance dont try fueling it
+  if (dist > 5) return; // If the trailer is further than 2.5 distance dont try fueling it
 
   if (trailerInfo.fuelLevel >= 100) {
     return sendNotification("Your trailer is already full!", playerServerId)
@@ -143,6 +142,19 @@ onNet(formatEventName("spawnTrailer"), (info: Trailer) => {
   SetEntityHeading(trailerObj, 140.338)
   SetEntityInvincible(trailerObj, true)
   trailerInfo = info
+
+  // Register sign on duty npc
+  const options = [
+    { text: "Fuel Trailer", eventName: formatEventName("attemptRefill") },
+    { text: "Fuel Level", eventName: formatEventName("attemptGetTrailerFuelLevel") },
+    { text: "Pump Fuel", eventName: formatEventName("attemptFillStation") },
+  ];
+  global.exports["fivem-inspect"].registerInspectEntity(trailerObj, options);
+});
+
+// This is just here because `fivem-inspect` only triggers client events
+onNet(formatEventName("attemptGetTrailerFuelLevel"), () => {
+  TriggerServerEvent(formatEventName("getTrailerFuelLevel"))
 });
 
 // Called when server sent us an assigned zone
@@ -189,7 +201,7 @@ onNet(formatEventName("attemptFillStation"), (station: GasStation) => {
   const trailerCoords = GetEntityCoords(trailerObj, false)
   const dist = GetDistanceBetweenCoords(playerCoord[0], playerCoord[1], playerCoord[2], trailerCoords[0], trailerCoords[1], trailerCoords[2], false)
 
-  if (dist > 2.5) return; // If the trailer is further than 2.5 distance dont try pumping fuel
+  if (dist > 5) return; // If the trailer is further than 2.5 distance dont try pumping fuel
 
   TriggerServerEvent(formatEventName("fillStation"), assignedStation)
 });
