@@ -39,8 +39,9 @@ export default class GasDelivery {
   }
 
   // Get player Object
-  getPlayer = (playerServerId: string) => {
-    return this.playersOnDuty.find(e => e.source === playerServerId);
+  getPlayer = (playerServerId: string | number) => {
+    const index = this.playersOnDuty.findIndex(e => e.source === playerServerId);
+    return index !== -1 ? this.playersOnDuty[index] : null;
   }
 
   // Remove player from on duty

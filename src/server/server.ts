@@ -142,6 +142,7 @@ onNet(formatEventName("completedFillingStation"), (fillStation: GasStation) => {
   // Calculate payout for the player
   const fuelUsed = 100 - remainingFuel;
   const payout = payoutPerPecent * fuelUsed;
+  player.addMoneyToPaycheck(payout);
   return TriggerClientEvent(formatEventName("notification"), playerServerId, `Completed filling station - payout was $${payout}`);
 });
 
@@ -154,6 +155,16 @@ onNet(formatEventName("signOffDuty"), () => {
     Activity.setOffduty(playerServerId)
     TriggerClientEvent(formatEventName("notification"), playerServerId, `You have signed off duty`);
     return TriggerClientEvent(formatEventName("signedOffDuty"), playerServerId);
+  }
+});
+
+onNet(formatEventName("collectPaycheck"), () => {
+  const playerServerId = global.source;
+  const player = Activity.getPlayer(playerServerId);
+  const paycheck = player.collectPaycheck();
+
+  if (player) {
+    TriggerClientEvent(formatEventName("notification"), playerServerId, `You have collected your paycheck! ${paycheck}`);
   }
 });
 

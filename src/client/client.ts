@@ -34,7 +34,7 @@ const handleResourceStart = (): void => {
   const options = [
     { text: "Sign On", eventName: formatEventName("attemptSignOnDuty") },
     { text: "Sign Off", eventName: formatEventName("signOffDuty") },
-    { text: "Collect Paycheck", eventName: "" },
+    { text: "Collect Paycheck", eventName: formatEventName("attemptCollectPaycheck") },
   ];
   global.exports["fivem-inspect"].registerInspectEntity(signOnDutyPed, options);
 
@@ -256,4 +256,9 @@ onNet(formatEventName("signedOffDuty"), (message: string) => {
   assignedStation = null;
   trailerInfo = null;
   trailerObj = null;
+});
+
+// Called when user wants to collect paycheck from NPC
+onNet(formatEventName("attemptCollectPaycheck"), () => {
+  TriggerServerEvent(formatEventName("collectPaycheck"))
 });
