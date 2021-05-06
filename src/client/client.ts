@@ -187,6 +187,10 @@ onNet(formatEventName("attemptFillStation"), (station: GasStation) => {
     return sendNotification("You don't have an assign trailer to refill.", playerServerId)
   }
 
+  if (!insideAssignedZone) {
+    return sendNotification("You're not in the required zone to fill.", playerServerId)
+  }
+
 
   const ped = PlayerPedId()
   const playerCoord = GetEntityCoords(ped, true)
