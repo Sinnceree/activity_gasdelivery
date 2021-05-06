@@ -246,9 +246,15 @@ onNet(formatEventName("signedOffDuty"), (message: string) => {
   assignedStation = null;
   trailerInfo = null;
   trailerObj = null;
+  removeStationBlip();
 });
 
 // Called when user wants to collect paycheck from NPC
 onNet(formatEventName("attemptCollectPaycheck"), () => {
-  TriggerServerEvent(formatEventName("collectPaycheck"))
+  TriggerServerEvent(formatEventName("collectPaycheck"));
+});
+
+// Called when NPC wants to sign the user out
+onNet(formatEventName("attemptSignOffDuty"), () => {
+  TriggerServerEvent(formatEventName("signOffDuty"));
 });
