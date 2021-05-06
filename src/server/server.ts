@@ -28,7 +28,7 @@ onNet(formatEventName("trailerRefilled"), (playerServerId: number) => {
 // Called when we picked a random person to assign a gas station to fill up.
 onNet(formatEventName("assignGasStation"), (playerServerId: number) => {
   Activity.assignGasStation(playerServerId);
-})
+});
 
 // Called when client is trying to fuel station
 onNet(formatEventName("fillStation"), (fillStation: GasStation, playerServerId: number) => {
