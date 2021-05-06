@@ -242,7 +242,7 @@ onNet(formatEventName("notification"), (message: string) => {
 });
 
 // Handle user signed off duty
-onNet(formatEventName("signedOffDuty"), (message: string) => {
+onNet(formatEventName("signedOffDuty"), () => {
   assignedStation = null;
   trailerInfo = null;
   trailerObj = null;
