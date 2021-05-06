@@ -5,6 +5,7 @@ import { createPed, sendNotification, createStationBlip, removeStationBlip } fro
 import Trailer from "../server/classes/Trailer"
 import GasStation from "../server/classes/GasStation";
 
+let activityStarted = false;
 let signOnDutyPed = null;
 let inRefillZone = false;
 let activityEnabled = true;
@@ -257,4 +258,26 @@ onNet(formatEventName("attemptCollectPaycheck"), () => {
 // Called when NPC wants to sign the user out
 onNet(formatEventName("attemptSignOffDuty"), () => {
   TriggerServerEvent(formatEventName("signOffDuty"));
+});
+
+
+// Exported functions
+global.exports("startActivity", (playerServerId: number) => {
+  TriggerEvent(formatEventName("attemptSignOnDuty"));
+});
+
+global.exports("setActivityStatus", (toggle: boolean) => {
+  activityStarted = toggle;
+});
+
+global.exports("setLocationStatus", (locationId: number, enabledDisabled: boolean) => {
+  // Todo
+});
+
+global.exports("setActivityDestination", (locationId: number) => {
+  // Todo
+});
+
+global.exports("removeActivityDestination", (locationId: number) => {
+  // Todo
 });
