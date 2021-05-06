@@ -15,7 +15,3 @@ RegisterCommand("trailerfuel", async (source: number, args: string[]) => {
 RegisterCommand("assign", async (source: number, args: string[]) => {
   TriggerServerEvent(formatEventName("assignGasStation"), GetPlayerServerId(source))
 }, false)
-
-RegisterCommand("trailerinteract", async (source: number, args: string[]) => {
-  TriggerEvent(formatEventName("interaction"))
-}, false)

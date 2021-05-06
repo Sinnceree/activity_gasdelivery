@@ -33,7 +33,7 @@ const handleResourceStart = (): void => {
   // Register sign on duty npc
   const options = [
     { text: "Sign On", eventName: formatEventName("attemptSignOnDuty") },
-    { text: "Sign Off", eventName: formatEventName("signOffDuty") },
+    { text: "Sign Off", eventName: formatEventName("attemptSignOffDuty") },
     { text: "Collect Paycheck", eventName: formatEventName("attemptCollectPaycheck") },
   ];
   global.exports["fivem-inspect"].registerInspectEntity(signOnDutyPed, options);
@@ -54,16 +54,6 @@ on("onResourceStop", (resourceName: string) => {
   handleResourceStop();
 });
 
-// Called when user clicks interaction button
-onNet(formatEventName("interaction"), () => {
-  // if (inRefillZone) {
-  //   return TriggerEvent(formatEventName("attemptRefill"))
-  // }
-
-  // if (assignedStation && insideAssignedZone) {
-  //   return TriggerEvent(formatEventName("attemptFillStation"))
-  // }
-});
 
 // Called when user tries to go on duty
 onNet(formatEventName("attemptSignOnDuty"), () => {

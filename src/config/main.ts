@@ -80,7 +80,6 @@ export const stations: GasStation[] = [
 
 let trailerFillZone: any;
 if (!IsDuplicityVersion()) {
-  RegisterKeyMapping("trailerinteract", "Interact with trailer", "keyboard", "e");
 
   trailerFillZone = global.exports["nns_polyzone"]["CreateBoxZone"]("trailer_fill_zone", new Cfx.Vector3(594.79, -2803.04, 6.06), 7.6, 22.8, {
     heading: 59,
