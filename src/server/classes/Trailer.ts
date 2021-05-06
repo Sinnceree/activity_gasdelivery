@@ -1,8 +1,8 @@
 export default class Trailer {
-  source: string;
+  source: number;
   fuelLevel: number;
 
-  constructor(source: string) {
+  constructor(source: number) {
     this.source = source;
     this.fuelLevel = this.randomNumber(1, 40);
   }

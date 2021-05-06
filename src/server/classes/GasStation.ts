@@ -11,7 +11,7 @@ interface PolyInfoObject {
 export default class GasStation {
   id: string;
   name: string;
-  assignedTo: string;
+  assignedTo: number;
   isBeingFilled: boolean;
   fuelLevel: number;
   coords: Cfx.Vector3;
@@ -46,7 +46,7 @@ export default class GasStation {
     return this.fuelLevel;
   }
 
-  setAssignedTo = (playerServerId: string) => {
+  setAssignedTo = (playerServerId: number) => {
     this.assignedTo = playerServerId;
     return this.assignedTo;
   }

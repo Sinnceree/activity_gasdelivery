@@ -120,7 +120,7 @@ onNet(formatEventName("attemptRefill"), () => {
     console.log("Done fueling truck.");
     FreezeEntityPosition(trailerObj, false);
     TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 0.5, "pumping", 0);
-    TriggerServerEvent(formatEventName("trailerRefilled"))
+    TriggerServerEvent(formatEventName("trailerRefilled"), playerServerId);
   }, refuelTrailerTime)
 });
 
@@ -145,7 +145,8 @@ onNet(formatEventName("spawnTrailer"), (info: Trailer) => {
 
 // This is just here because `fivem-inspect` only triggers client events
 onNet(formatEventName("attemptGetTrailerFuelLevel"), () => {
-  TriggerServerEvent(formatEventName("getTrailerFuelLevel"))
+  const playerServerId = GetPlayerServerId(PlayerId());
+  TriggerServerEvent(formatEventName("getTrailerFuelLevel"), playerServerId);
 });
 
 // Called when server sent us an assigned zone
@@ -194,7 +195,7 @@ onNet(formatEventName("attemptFillStation"), (station: GasStation) => {
 
   if (dist > 5) return; // If the trailer is further than 2.5 distance dont try pumping fuel
 
-  TriggerServerEvent(formatEventName("fillStation"), assignedStation)
+  TriggerServerEvent(formatEventName("fillStation"), assignedStation, playerServerId);
 });
 
 // Called when server allows us to actually refill the station
@@ -209,7 +210,7 @@ onNet(formatEventName("startFillingStation"), (station: GasStation) => {
   setTimeout(() => {
 
     FreezeEntityPosition(trailerObj, false)
-    TriggerServerEvent(formatEventName("completedFillingStation"), assignedStation)
+    TriggerServerEvent(formatEventName("completedFillingStation"), assignedStation, playerServerId);
     TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 0.5, "pumping", 0)
 
     removeStationBlip() // remove the blip we created
@@ -252,12 +253,14 @@ onNet(formatEventName("signedOffDuty"), () => {
 
 // Called when user wants to collect paycheck from NPC
 onNet(formatEventName("attemptCollectPaycheck"), () => {
-  TriggerServerEvent(formatEventName("collectPaycheck"));
+  const playerServerId = GetPlayerServerId(PlayerId());
+  TriggerServerEvent(formatEventName("collectPaycheck"), playerServerId);
 });
 
 // Called when NPC wants to sign the user out
 onNet(formatEventName("attemptSignOffDuty"), () => {
-  TriggerServerEvent(formatEventName("signOffDuty"));
+  const playerServerId = GetPlayerServerId(PlayerId());
+  TriggerServerEvent(formatEventName("signOffDuty"), playerServerId);
 });
 
 

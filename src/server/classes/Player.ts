@@ -1,11 +1,11 @@
 import GasStation from "./GasStation";
 
 export default class Player {
-  source: string;
+  source: number;
   paycheck: number;
   assignedStation: GasStation | null;
 
-  constructor(source: string) {
+  constructor(source: number) {
     this.source = source;
     this.assignedStation = null;
     this.paycheck = 0;
