@@ -1,6 +1,6 @@
 import { Vector3 } from "fivem-js";
 import "./commands"
-import { activityName, formatEventName, fuelTrailerHashKey, refuelTrailerTime, useNopixelExports, pumpFuelTime, timeToComplete } from "../config/main"
+import { activityName, formatEventName, fuelTrailerHashKey, refuelTrailerTime, pumpFuelTime, timeToComplete } from "../config/main"
 import { createPed, sendNotification, createStationBlip, removeStationBlip } from "./functions";
 import Trailer from "../server/classes/Trailer"
 import GasStation from "../server/classes/GasStation";
@@ -55,7 +55,6 @@ on("onResourceStop", (resourceName: string) => {
   handleResourceStop();
 });
 
-
 // Called when user tries to go on duty
 onNet(formatEventName("attemptSignOnDuty"), () => {
   const playerServerId = GetPlayerServerId(PlayerId());
@@ -64,21 +63,11 @@ onNet(formatEventName("attemptSignOnDuty"), () => {
     return sendNotification("Activity Disabled", playerServerId)
   }
 
-  let canDoActivity = false;
-
-  if (useNopixelExports) {
-    canDoActivity = global.exports["np-activities"].canDoActivity(activityName, playerServerId);
-  } else {
-    canDoActivity = true;
-  }
+  let canDoActivity = global.exports["np-activities"].canDoActivity(activityName, playerServerId);
 
   if (canDoActivity) {
     emitNet(formatEventName("getOnDuty"), playerServerId)
-
-    if (useNopixelExports) {
-      global.exports["np-activities"].activityInProgress(activityName, playerServerId, timeToComplete)
-
-    }
+    global.exports["np-activities"].activityInProgress(activityName, playerServerId, timeToComplete)
   }
 });
 
@@ -152,13 +141,8 @@ onNet(formatEventName("attemptGetTrailerFuelLevel"), () => {
 // Called when server sent us an assigned zone
 onNet(formatEventName("assignedZone"), (station: GasStation) => {
   const playerServerId = GetPlayerServerId(PlayerId());
-  let canDoTask = false;
+  let canDoTask = global.exports["np-activities"].canDoTask(activityName, playerServerId, station.id);
 
-  if (useNopixelExports) {
-    canDoTask = global.exports["np-activities"].canDoTask(activityName, playerServerId, station.id);
-  } else {
-    canDoTask = true;
-  }
 
   if (!canDoTask) {
     return sendNotification("Can't do that task.", playerServerId)
@@ -167,11 +151,7 @@ onNet(formatEventName("assignedZone"), (station: GasStation) => {
   assignedStation = station;
   createStationBlip(station);
 
-  if (useNopixelExports) {
-    global.exports["np-activities"].taskInProgress(activityName, playerServerId, station.id, `Go refill ${station.name}`);
-  } else {
-    sendNotification(`Go refill ${station.name}`, playerServerId)
-  }
+  global.exports["np-activities"].taskInProgress(activityName, playerServerId, station.id, `Go refill ${station.name}`);
 });
 
 // Called when user is trying to refill gas station
@@ -220,9 +200,7 @@ onNet(formatEventName("startFillingStation"), (station: GasStation) => {
     removeStationBlip() // remove the blip we created
     assignedStation = null
 
-    if (useNopixelExports) {
-      global.exports["np-activities"].taskCompleted(activityName, playerServerId, station.id, true, "Completed filling up station")
-    }
+    global.exports["np-activities"].taskCompleted(activityName, playerServerId, station.id, true, "Completed filling up station")
 
   }, pumpFuelTime);
 
@@ -266,7 +244,6 @@ onNet(formatEventName("attemptSignOffDuty"), () => {
   const playerServerId = GetPlayerServerId(PlayerId());
   TriggerServerEvent(formatEventName("signOffDuty"), playerServerId);
 });
-
 
 // Exported functions
 global.exports("startActivity", (playerServerId: number) => {

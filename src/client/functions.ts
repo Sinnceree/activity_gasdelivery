@@ -1,12 +1,9 @@
-import { useNopixelExports, blipInfo } from "../config/main";
+import { blipInfo } from "../config/main";
 import GasStation from "../server/classes/GasStation";
 import { Vector3 } from "fivem-js";
 
 export const sendNotification = (message: string, playerServerId: number) => {
-  if (useNopixelExports) {
-    return global.exports["np-activities"].notifyPlayer(playerServerId, message)
-  }
-  console.log(message)
+  global.exports["np-activities"].notifyPlayer(playerServerId, message)
 }
 
 let createdBlip: any = null;

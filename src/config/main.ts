@@ -1,7 +1,6 @@
 import * as Cfx from "fivem-js";
 import GasStation from "../server/classes/GasStation";
 
-export const useNopixelExports = false; // To use np-activies
 export const timeBetweenQueueCheck = 30000; // How long to wait between chekcing players in queue
 export const refuelTrailerTime = 10000; // How long it takes to fuel trailer with fuel
 export const payoutPerPecent = 11; // Payment $ per percent of fuel
